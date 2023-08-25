@@ -6,15 +6,15 @@ String.prototype.replaceAt = function (index, replacement) {
 class SudokuSolver {
 
   validate(puzzleString, res) {
-    if (puzzleString === undefined) { return res.json({ error: 'Required field missing' }) }
+    if (puzzleString === undefined) { return 'fieldmissing' }
     if (puzzleString.length !== 81) {
-      return res.json({ error: 'Expected puzzle to be 81 characters long' })
+      return 'toolong'
     }
     for (let i = 0; i < puzzleString.length; i++) {
       let test = puzzleString[i].includes('.') || /[1-9]/.test(puzzleString[i])
-      if (!test) { return res.json({ error: 'Invalid characters in puzzle' }) }
+      if (!test) { return 'invalid' }
     }
-    return
+    return 'valid'
   }
 
   letterToNumber(row) {
@@ -81,6 +81,7 @@ class SudokuSolver {
 
 
   solve(puzzleString) {
+    if (puzzleString.length !== 81) {return 'toolong'}
     let rowRes,colRes,regRes,exit= 0
     let answer = puzzleString;
     while (answer.includes('.')) {
@@ -144,7 +145,7 @@ class SudokuSolver {
                 break;
             }
           }
-          if (one === 'fail' && two === 'fail' && three === 'fail' && four === 'fail' && five === 'fail' && six === 'fail' && seven === 'fail' && eight === 'fail' && nine === 'fail' && !/[1-9]/.test(answer.charAt(i - 1))) {return 'fail' , console.log('fail', row, column, i) }
+          if (one === 'fail' && two === 'fail' && three === 'fail' && four === 'fail' && five === 'fail' && six === 'fail' && seven === 'fail' && eight === 'fail' && nine === 'fail' && !/[1-9]/.test(answer.charAt(i - 1))) {return 'fail'}
           if (two === 'fail' && three === 'fail' && four === 'fail' && five === 'fail' && six === 'fail' && seven === 'fail' && eight === 'fail' && nine === 'fail') { answer = answer.replaceAt(i - 1, 1) }
           if (one === 'fail' && three === 'fail' && four === 'fail' && five === 'fail' && six === 'fail' && seven === 'fail' && eight === 'fail' && nine === 'fail') { answer = answer.replaceAt(i - 1, 2) }
           if (one === 'fail' && two === 'fail' && four === 'fail' && five === 'fail' && six === 'fail' && seven === 'fail' && eight === 'fail' && nine === 'fail') { answer = answer.replaceAt(i - 1, 3) }
@@ -180,7 +181,6 @@ class SudokuSolver {
       
       exit++
       if (exit === 100) {
-        console.log("using exit")
         return'fail'
 
       }}

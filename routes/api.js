@@ -14,7 +14,10 @@ module.exports = function (app) {
       let column = req.body.coordinate.at(1)
       let puzzle = req.body.puzzle
       let value = req.body.value
-      if (solver.validate(puzzle, res)) { return }
+      let validCheck = solver.validate(puzzle)
+      if(validCheck === 'fieldmissing') { return res.json({ error: 'Required field missing' }) }
+      if(validCheck === 'toolong'){return res.json({ error: 'Expected puzzle to be 81 characters long' })}
+      if(validCheck === 'invalid'){return res.json({ error: 'Invalid characters in puzzle' }) }
       if (value < 1 || value > 9 || !(/[1-9]/.test(value))) { return res.json({ error: 'Invalid value' }) }
       if (!(/[1-9]/.test(column)) || !(/[A-Ia-i]/.test(row)) || req.body.coordinate.length > 2) { return res.json({ error: 'Invalid coordinate' }) }
       row = solver.letterToNumber(row)
@@ -41,9 +44,11 @@ module.exports = function (app) {
   app.route('/api/solve')
     .post((req, res) => {
       let puzzle = req.body.puzzle
-      if (solver.validate(puzzle, res)) { return }
+      let validCheck = solver.validate(puzzle)
+      if(validCheck === 'fieldmissing') { return res.json({ error: 'Required field missing' }) }
+      if(validCheck === 'toolong'){return res.json({ error: 'Expected puzzle to be 81 characters long' })}
+      if(validCheck === 'invalid'){return res.json({ error: 'Invalid characters in puzzle' }) }
       let answer = solver.solve(puzzle)
-      console.log(answer)
       if(answer === 'fail'){return res.json({error: 'Puzzle cannot be solved'})}
       res.json({solution: answer})
 
